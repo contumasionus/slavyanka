@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String                @id @default(uuid())
+  email         String                @unique
+  password      String
+  name          String
+  role          String                @default("customer")
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  orders        Order[]
+  notifications ProductNotification[]
+  visits        UserVisit[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id            String                @id @default(uuid())
+  name          String
+  description   String?
+  price         Float
+  weight        String?
+  imageUrl      String?
+  categoryId    String
+  inStock       Boolean               @default(true)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  deliveryDate  DateTime?
+  orderItems    OrderItem[]
+  notifications ProductNotification[]
+  category      Category              @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
+}
+
+model ProductNotification {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, productId])
+  @@map("product_notifications")
+}
+
+model UserVisit {
+  id        String   @id @default(uuid())
+  userId    String
+  visitedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("user_visits")
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  status      String      @default("new")
+  totalAmount Float
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  items       OrderItem[]
+  user        User        @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+  product   Product @relation(fields: [productId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id])
+
+  @@map("order_items")
+}
