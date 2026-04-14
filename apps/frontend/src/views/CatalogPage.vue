@@ -64,7 +64,7 @@
 
               <div v-if="!product.inStock && product.deliveryDate" class="restock-info">
                 <span class="restock-icon">📦</span>
-                <span class="restock-text">Данный товар закончился, товар пополнится {{ product.deliveryDate }}</span>
+                <span class="restock-text">Товар будет {{ formatDate(product.deliveryDate) }}</span>
               </div>
               
               <button 
@@ -152,6 +152,16 @@ function getCategoryImage(categoryName: string): string {
   
   // Если не нашли, используем захардкоженные URL-адреса
   return categoryImages[categoryName] || '/images/categories/placeholder.svg';
+}
+
+function formatDate(dateString: string): string {
+  const [year, month, day] = dateString.split('T')[0].split('-');
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  const monthNames = [
+    'Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня',
+    'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'
+  ];
+  return `${date.getDate()} ${monthNames[date.getMonth()]}`;
 }
 
 function formatPrice(price: number): string {

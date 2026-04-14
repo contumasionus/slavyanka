@@ -24,7 +24,9 @@ export async function categoriesRoutes(server: FastifyInstance) {
         },
       },
     },
-  }, categoriesController.create.bind(categoriesController));
+  }, async (request: any, reply: any) => {
+    await categoriesController.create(request, reply);
+  });
 
   server.put('/:id', {
     preHandler: verifyAdmin,
@@ -39,9 +41,13 @@ export async function categoriesRoutes(server: FastifyInstance) {
         },
       },
     },
-  }, categoriesController.update.bind(categoriesController));
+  }, async (request: any, reply: any) => {
+    await categoriesController.update(request, reply);
+  });
 
   server.delete('/:id', {
     preHandler: verifyAdmin,
-  }, categoriesController.delete.bind(categoriesController));
+  }, async (request: any, reply: any) => {
+    await categoriesController.delete(request, reply);
+  });
 }

@@ -9,11 +9,15 @@ export async function ordersRoutes(server: FastifyInstance) {
 
   server.get('/', {
     preHandler: verifyAdmin,
-  }, ordersController.getAll.bind(ordersController));
+  }, async (request: any, reply: any) => {
+    await ordersController.getAll(request, reply);
+  });
 
   server.get('/:id', {
     preHandler: verifyAdmin,
-  }, ordersController.getById.bind(ordersController));
+  }, async (request: any, reply: any) => {
+    await ordersController.getById(request, reply);
+  });
 
   server.patch('/:id/status', {
     preHandler: verifyAdmin,
@@ -26,5 +30,7 @@ export async function ordersRoutes(server: FastifyInstance) {
         },
       },
     },
-  }, ordersController.updateStatus.bind(ordersController));
+  }, async (request: any, reply: any) => {
+    await ordersController.updateStatus(request, reply);
+  });
 }
