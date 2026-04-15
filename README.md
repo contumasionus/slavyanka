@@ -56,8 +56,8 @@
 
 ```bash
 # Клонировать репозиторий
-git clone <repository-url>
-cd slavyanka-store
+git clone https://github.com/contumasionus/slavyanka
+cd slavyanka-main
 
 # Установить зависимости
 npm install
