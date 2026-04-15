@@ -89,7 +89,10 @@ dist
 .cache/
 
 # Ignore only backend public folder (user uploads)
-apps/backend/public/
+/apps/backend/public/
+
+# Allow frontend public folder (static assets and images
+!apps/frontend/public/
 
 # Storybook build outputs
 .out
