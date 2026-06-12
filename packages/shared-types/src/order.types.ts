@@ -1,8 +1,12 @@
 export enum OrderStatus {
   NEW = 'new',
-  PROCESSING = 'processing',
-  READY = 'ready',
-  COMPLETED = 'completed'
+  CONFIRMED = 'confirmed',
+  PREPARING = 'preparing',
+  DELIVERING = 'delivering',
+  DELIVERED = 'delivered',
+  CANCELLED = 'cancelled',
+  RECEIVED = 'received',
+  DELIVERY_ISSUE = 'delivery_issue',
 }
 
 export interface OrderItem {
@@ -21,8 +25,32 @@ export interface Order {
   items: OrderItem[];
   status: OrderStatus;
   totalAmount: number;
-  createdAt: Date;
-  updatedAt: Date;
+  customerName: string;
+  customerPhone: string;
+  customerAddress: string;
+  comment: string;
+  deliveryType: 'pickup' | 'delivery';
+  deliveryTime?: string;
+  deliveryAddress?: string;
+  paymentMethod: string;
+  cardLast4: string;
+  paid: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateOrderDto {
+  items: { productId: string; quantity: number; price: number }[];
+  totalAmount: number;
+  customerName: string;
+  customerPhone: string;
+  customerAddress: string;
+  comment?: string;
+  deliveryType: 'pickup' | 'delivery';
+  deliveryTime?: string;
+  deliveryAddress?: string;
+  paymentMethod?: string;
+  cardLast4?: string;
 }
 
 export interface UpdateOrderStatusDto {

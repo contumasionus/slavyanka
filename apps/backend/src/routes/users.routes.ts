@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+import prisma from '../db';
 import { UsersController } from '../controllers/users.controller';
 import { UsersService } from '../services/users.service';
 import { NotificationsService } from '../services/notifications.service';
@@ -6,9 +7,9 @@ import { VisitsService } from '../services/visits.service';
 import { verifyAdmin, verifyJWT } from '../middleware/auth';
 
 export async function usersRoutes(server: FastifyInstance) {
-  const usersService = new UsersService(server.prisma);
-  const notificationsService = new NotificationsService(server.prisma);
-  const visitsService = new VisitsService(server.prisma);
+  const usersService = new UsersService(prisma);
+  const notificationsService = new NotificationsService(prisma);
+  const visitsService = new VisitsService(prisma);
   const usersController = new UsersController(usersService, notificationsService, visitsService);
 
   server.get('/', {

@@ -1,10 +1,11 @@
 import { FastifyInstance } from 'fastify';
+import prisma from '../db';
 import { CategoriesController } from '../controllers/categories.controller';
 import { CategoriesService } from '../services/categories.service';
 import { verifyAdmin } from '../middleware/auth';
 
 export async function categoriesRoutes(server: FastifyInstance) {
-  const categoriesService = new CategoriesService(server.prisma);
+  const categoriesService = new CategoriesService(prisma);
   const categoriesController = new CategoriesController(categoriesService);
 
   server.get('/', categoriesController.getAll.bind(categoriesController));

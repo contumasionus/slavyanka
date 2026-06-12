@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  slavyanka-store:
+    build: .
+    container_name: slavyanka-store
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./apps/backend/prisma:/app/apps/backend/prisma
+    networks:
+      - slavyanka-network
+
+networks:
+  slavyanka-network:
+    driver: bridge

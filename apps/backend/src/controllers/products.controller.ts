@@ -9,8 +9,9 @@ export class ProductsController {
     reply.send(products);
   }
 
-  async getById(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
-    const product = await this.productsService.findById(request.params.id);
+  async getById(request: FastifyRequest, reply: FastifyReply) {
+    const params = request.params as { id: string };
+    const product = await this.productsService.findById(params.id);
     if (!product) {
       reply.status(404).send({ error: 'Product not found' });
       return;
@@ -18,31 +19,62 @@ export class ProductsController {
     reply.send(product);
   }
 
-  async getByCategory(request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) {
-    const products = await this.productsService.findByCategory(request.params.slug);
+  async getByCategory(request: FastifyRequest, reply: FastifyReply) {
+    const params = request.params as { slug: string };
+    const products = await this.productsService.findByCategory(params.slug);
     reply.send(products);
   }
 
-  async create(request: FastifyRequest<{ Body: { name: string; description?: string; price: number; weight?: string; imageUrl?: string; categoryId: string; inStock?: boolean; deliveryDate?: string } }>, reply: FastifyReply) {
+  async getPromo(request: FastifyRequest, reply: FastifyReply) {
+    const products = await this.productsService.findPromo();
+    reply.send(products);
+  }
+
+  async search(request: FastifyRequest, reply: FastifyReply) {
+    const query = (request.query as { q?: string }).q || '';
+    if (!query.trim()) {
+      reply.send([]);
+      return;
+    }
+    const products = await this.productsService.search(query);
+    reply.send(products);
+  }
+
+  async getViewed(request: FastifyRequest, reply: FastifyReply) {
+    const user = request.user as { id: string };
+    const products = await this.productsService.getViewed(user.id);
+    reply.send(products);
+  }
+
+  async recordView(request: FastifyRequest, reply: FastifyReply) {
+    const user = request.user as { id: string };
+    const body = request.body as { productId: string };
+    await this.productsService.recordView(user.id, body.productId);
+    reply.status(200).send({ ok: true });
+  }
+
+  async create(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const product = await this.productsService.create(request.body);
+      const product = await this.productsService.create(request.body as any);
       reply.status(201).send(product);
     } catch (error: any) {
       reply.status(400).send({ error: error.message || 'Failed to create product' });
     }
   }
 
-  async update(request: FastifyRequest<{ Params: { id: string }; Body: Partial<{ name: string; description?: string; price: number; weight?: string; imageUrl?: string; categoryId: string; inStock?: boolean; deliveryDate?: string }> }>, reply: FastifyReply) {
+  async update(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const product = await this.productsService.update(request.params.id, request.body);
+      const params = request.params as { id: string };
+      const product = await this.productsService.update(params.id, request.body as any);
       reply.send(product);
     } catch (error: any) {
       reply.status(400).send({ error: error.message || 'Failed to update product' });
     }
   }
 
-  async delete(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
-    await this.productsService.delete(request.params.id);
+  async delete(request: FastifyRequest, reply: FastifyReply) {
+    const params = request.params as { id: string };
+    await this.productsService.delete(params.id);
     reply.status(204).send();
   }
 }

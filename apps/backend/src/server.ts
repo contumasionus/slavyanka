@@ -1,33 +1,81 @@
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
 import Fastify from 'fastify';
-import { corsPlugin } from './plugins/cors';
-import { jwtPlugin } from './plugins/jwt';
-import { prismaPlugin } from './plugins/prisma';
-import { swaggerPlugin } from './plugins/swagger';
+import cors from '@fastify/cors';
+import jwt from '@fastify/jwt';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
+import multipart from '@fastify/multipart';
+import helmet from '@fastify/helmet';
+import rateLimit from '@fastify/rate-limit';
 import { registerRoutes } from './routes';
 
-const server = Fastify({
-  logger: true,
-});
+const PORT = parseInt(process.env.PORT || '3001', 10);
+const HOST = process.env.HOST || '0.0.0.0';
 
-async function start() {
-  // Register plugins
-  await corsPlugin(server);
-  await jwtPlugin(server);
-  await prismaPlugin(server);
-  await swaggerPlugin(server);
+async function main() {
+  const server = Fastify({
+    logger: {
+      level: 'info',
+    },
+  });
 
-  // Register routes
+  // Plugins
+  await server.register(cors, {
+    origin: true,
+    credentials: true,
+  });
+
+  await server.register(jwt, {
+    secret: process.env.JWT_SECRET || 'slavyanka-super-secret-key-2026',
+  });
+
+  await server.register(swagger, {
+    openapi: {
+      info: {
+        title: 'Славянка API',
+        description: 'API для магазина "Славянка"',
+        version: '1.0.0',
+      },
+    },
+  });
+
+  await server.register(swaggerUi, {
+    routePrefix: '/docs',
+  });
+
+  await server.register(multipart, {
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB
+    },
+  });
+
+  await server.register(helmet, {
+    contentSecurityPolicy: false,
+  });
+
+  await server.register(rateLimit, {
+    max: 100,
+    timeWindow: '1 minute',
+  });
+
+  // Routes
   await registerRoutes(server);
 
-  // Start server
+  // Health check
+  server.get('/health', async () => ({ status: 'ok' }));
+
+  // Start
   try {
-    await server.listen({ port: 3001, host: '0.0.0.0' });
-    console.log('Server running on http://localhost:3001');
-    console.log('Swagger docs available at http://localhost:3001/docs');
+    await server.listen({ port: PORT, host: HOST });
+    console.log(`🚀 Server running on http://${HOST}:${PORT}`);
+    console.log(`📚 Swagger docs: http://localhost:${PORT}/docs`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
   }
 }
 
-start();
+main();

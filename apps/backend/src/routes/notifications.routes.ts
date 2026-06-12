@@ -1,10 +1,11 @@
 import { FastifyInstance } from 'fastify';
+import prisma from '../db';
 import { NotificationsController } from '../controllers/notifications.controller';
 import { NotificationsService } from '../services/notifications.service';
 import { verifyJWT } from '../middleware/auth';
 
 export async function notificationsRoutes(server: FastifyInstance) {
-  const notificationsService = new NotificationsService(server.prisma);
+  const notificationsService = new NotificationsService(prisma);
   const notificationsController = new NotificationsController(notificationsService);
 
   server.post('/subscribe/:productId', {

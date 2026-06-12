@@ -13,13 +13,29 @@ model User {
   password      String
   name          String
   role          String                @default("customer")
+  verified      Boolean               @default(false)
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
   orders        Order[]
   notifications ProductNotification[]
   visits        UserVisit[]
+  auditLogs     AuditLog[]
+  chatSessions  ChatSession[]
+  reviews       Review[]
+  viewedProducts ViewedProduct[]
 
   @@map("users")
+}
+
+model VerificationCode {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email, code])
+  @@map("verification_codes")
 }
 
 model Category {
@@ -44,11 +60,28 @@ model Product {
   imageUrl      String?
   categoryId    String
   inStock       Boolean               @default(true)
+  composition   String?
+  manufacturer  String?
+  country       String?
+  shelfLife     String?
+  calories      Int?
+  proteins      Float?
+  fats          Float?
+  carbohydrates Float?
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
   deliveryDate  DateTime?
+  // Скидки и акции
+  discountPrice Float?
+  discountUntil DateTime?
+  isPromo       Boolean               @default(false)
+  // Рейтинг (вычисляемое поле, обновляется при добавлении отзывов)
+  avgRating     Float                 @default(0)
+  reviewCount   Int                   @default(0)
   orderItems    OrderItem[]
   notifications ProductNotification[]
+  reviews       Review[]
+  viewed        ViewedProduct[]
   category      Category              @relation(fields: [categoryId], references: [id])
 
   @@map("products")
@@ -76,14 +109,24 @@ model UserVisit {
 }
 
 model Order {
-  id          String      @id @default(uuid())
-  userId      String
-  status      String      @default("new")
-  totalAmount Float
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  items       OrderItem[]
-  user        User        @relation(fields: [userId], references: [id])
+  id            String      @id @default(uuid())
+  userId        String
+  status        String      @default("new")
+  totalAmount   Float
+  customerName  String      @default("")
+  customerPhone String      @default("")
+  customerAddress String    @default("")
+  comment       String      @default("")
+  deliveryType  String      @default("pickup")
+  deliveryTime  String?
+  deliveryAddress String?
+  paymentMethod String      @default("")
+  cardLast4     String      @default("")
+  paid          Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  items         OrderItem[]
+  user          User        @relation(fields: [userId], references: [id])
 
   @@map("orders")
 }
@@ -98,4 +141,122 @@ model OrderItem {
   order     Order   @relation(fields: [orderId], references: [id])
 
   @@map("order_items")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  rating    Int
+  text      String?
+  photo     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@map("reviews")
+}
+
+model News {
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  content   String
+  imageUrl  String?
+  excerpt   String?
+  tags      String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("news")
+}
+
+model ViewedProduct {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  viewedAt  DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@index([userId, viewedAt])
+  @@map("viewed_products")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  entity    String?
+  entityId  String?
+  details   String?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model ChatSession {
+  id        String        @id @default(uuid())
+  userId    String?
+  guestId   String
+  userName  String?
+  status    String        @default("active")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+  user      User?         @relation(fields: [userId], references: [id])
+
+  @@map("chat_sessions")
+}
+
+model PromoCode {
+  id        String   @id @default(uuid())
+  email     String
+  code      String   @unique
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@map("promo_codes")
+  @@index([email])
+}
+
+model ContactMessage {
+  id         String    @id @default(uuid())
+  name       String
+  email      String
+  phone      String    @default("")
+  topic      String    @default("")
+  message    String
+  adminReply String?
+  repliedAt  DateTime?
+  isRead     Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@map("contact_messages")
+}
+
+model ChatMessage {
+  id          String       @id @default(uuid())
+  sessionId   String
+  senderType  String
+  content     String
+  attachment  String?
+  isRead      Boolean      @default(false)
+  readAt      DateTime?
+  createdAt   DateTime     @default(now())
+  session     ChatSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
 }

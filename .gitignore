@@ -116,5 +116,10 @@ temp/
 *.sqlite
 prisma/migrations/
 
-# Uploads
-uploads/
+# Allow SQLite database for project portability
+!apps/backend/prisma/dev.db
+
+# Allow product images to be stored in the repository
+!apps/frontend/public/products/
+!apps/frontend/public/images/products/
+!apps/frontend/public/images/uploads/

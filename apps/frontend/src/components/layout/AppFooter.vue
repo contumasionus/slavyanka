@@ -1,125 +1,256 @@
 <template>
   <footer class="footer">
-    <div class="footer__container">
-      <div class="footer__info">
-        <h3 class="footer__title">Славянка</h3>
-        <p class="footer__description">Продуктовый магазин в деревне Курилово</p>
-        <p class="footer__address">📍 Молодёжная ул., 1В, д. Курилово</p>
-        <p class="footer__phone">📞 +7 (123) 456-78-90</p>
-      </div>
-      <div class="footer__schedule">
-        <h4 class="footer__schedule-title">Режим работы</h4>
-        <p>Пн-Чт: 8:00-21:00</p>
-        <p>Пт-Сб: 8:00-22:00</p>
-        <p>Вс: 8:00-21:00</p>
-      </div>
-      <div class="footer__nav">
-        <h4 class="footer__nav-title">Навигация</h4>
-        <router-link to="/" class="footer__link">Главная</router-link>
-        <router-link to="/catalog" class="footer__link">Каталог</router-link>
-        <router-link to="/about" class="footer__link">О нас</router-link>
-        <router-link to="/contacts" class="footer__link">Контакты</router-link>
+    <div class="footer__top">
+      <div class="footer__container">
+        <!-- Бренд -->
+        <div class="footer__brand">
+          <h3 class="footer__title">Славянка</h3>
+          <p class="footer__description">Продуктовый магазин в деревне Курилово. Свежие продукты каждый день.</p>
+          <div class="footer__contacts">
+            <a href="https://yandex.ru/maps/?text=Молодёжная%20ул.%2C%201В%2C%20д.%20Курилово" target="_blank" rel="noopener" class="footer__contact">
+              Молодёжная ул., 1В, д. Курилово
+            </a>
+            <a href="tel:+79254831291" class="footer__contact footer__contact--phone">
+              +7 (925) 483 12 91
+            </a>
+          </div>
+        </div>
+
+        <!-- Режим работы -->
+        <div class="footer__column">
+          <h4 class="footer__column-title">Режим работы</h4>
+          <ul class="footer__schedule">
+            <li><span>Пн-Чт</span><span>8:00 – 21:00</span></li>
+            <li><span>Пт-Сб</span><span>8:00 – 22:00</span></li>
+            <li><span>Вс</span><span>8:00 – 21:00</span></li>
+          </ul>
+        </div>
+
+        <!-- Навигация -->
+        <div class="footer__column">
+          <h4 class="footer__column-title">Навигация</h4>
+          <nav class="footer__nav">
+            <router-link to="/" class="footer__link">Главная</router-link>
+            <router-link to="/catalog" class="footer__link">Каталог</router-link>
+            <router-link to="/cart" class="footer__link">Корзина</router-link>
+            <router-link to="/about" class="footer__link">О нас</router-link>
+            <router-link to="/contacts" class="footer__link">Контакты</router-link>
+            <router-link to="/profile" class="footer__link">Личный кабинет</router-link>
+          </nav>
+        </div>
       </div>
     </div>
+
     <div class="footer__bottom">
-      <p>© 2026 Славянка. Все права защищены.</p>
+      <div class="footer__container">
+        <p class="footer__copyright">© 2026 Славянка. Все права защищены.</p>
+        <router-link to="/privacy" class="footer__copyright-link">Политика конфиденциальности</router-link>
+      </div>
     </div>
   </footer>
 </template>
 
+<script setup lang="ts">
+</script>
+
 <style scoped>
 .footer {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  padding: 40px 0 20px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
   margin-top: auto;
 }
 
-.footer__container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
+.footer__top {
+  padding: 64px 0 48px;
 }
 
+.footer__container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 48px;
+}
+
+/* Brand */
 .footer__title {
-  font-family: var(--font-kurale);
-  font-size: 36px;
-  margin-bottom: 15px;
+  font-family: var(--font-display);
+  font-size: 32px;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
 }
 
 .footer__description {
-  font-size: 16px;
-  margin-bottom: 10px;
-  opacity: 0.9;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  max-width: 340px;
 }
 
-.footer__address,
-.footer__phone {
+.footer__contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer__contact {
+  font-family: var(--font-body);
   font-size: 14px;
-  margin-bottom: 8px;
-  opacity: 0.8;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
 }
 
-.footer__schedule-title,
-.footer__nav-title {
-  font-family: var(--font-oswald);
-  font-size: 20px;
-  margin-bottom: 15px;
+.footer__contact:hover {
+  color: var(--color-text);
 }
 
-.footer__schedule p {
+.footer__contact--phone:hover {
+  color: var(--color-primary);
+}
+
+/* Columns */
+.footer__column-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
   font-size: 14px;
-  margin-bottom: 5px;
-  opacity: 0.9;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+}
+
+.footer__schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+.footer__schedule li {
+  display: flex;
+  justify-content: space-between;
+  max-width: 220px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.footer__schedule li span:first-child {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.footer__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .footer__link {
-  display: block;
+  font-family: var(--font-body);
   font-size: 14px;
-  margin-bottom: 8px;
-  opacity: 0.9;
-  transition: opacity 0.3s;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  position: relative;
+  padding-left: 0;
 }
 
 .footer__link:hover {
-  opacity: 1;
-  text-decoration: underline;
+  color: var(--color-primary);
+  padding-left: 6px;
 }
 
+/* Bottom */
 .footer__bottom {
-  max-width: 1200px;
-  margin: 30px auto 0;
-  padding: 20px 20px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  text-align: center;
-  font-size: 14px;
-  opacity: 0.7;
+  border-top: 1px solid var(--color-border-light);
+  padding: 20px 0;
 }
 
+.footer__bottom .footer__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer__copyright {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.footer__copyright-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer__copyright-link:hover {
+  color: var(--color-text);
+}
+
+/* Media Queries */
 @media (max-width: 768px) {
+  .footer__top {
+    padding: 48px 0 32px;
+  }
+
   .footer__container {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 36px;
     text-align: center;
   }
-  
+
+  .footer__description {
+    margin: 0 auto 20px;
+  }
+
+  .footer__contacts {
+    align-items: center;
+  }
+
+  .footer__schedule {
+    align-items: center;
+  }
+
+  .footer__schedule li {
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .footer__nav {
+    align-items: center;
+  }
+
+  .footer__link:hover {
+    padding-left: 0;
+  }
+
   .footer__title {
     font-size: 28px;
+  }
+
+  .footer__bottom .footer__container {
+    flex-direction: column;
+    gap: 8px;
   }
 }
 
 @media (max-width: 480px) {
-  .footer {
-    padding: 30px 0 15px;
+  .footer__top {
+    padding: 36px 0 24px;
   }
-  
+
   .footer__container {
-    padding: 0 15px;
+    padding: 0 16px;
   }
-  
+
   .footer__title {
     font-size: 24px;
   }
