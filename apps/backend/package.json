@@ -6,6 +6,7 @@
     "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/server.js",
+    "postinstall": "prisma generate",
     "setup": "if not exist .env copy .env.example .env && npx prisma db push && npx prisma generate && npx tsx prisma/seed.ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",

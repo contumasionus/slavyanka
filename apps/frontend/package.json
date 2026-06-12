@@ -11,8 +11,7 @@
     "vue": "^3.4.0",
     "vue-router": "^4.3.0",
     "pinia": "^2.1.0",
-    "axios": "^1.7.0",
-    "@slavyanka/shared-types": "file:../../packages/shared-types"
+    "axios": "^1.7.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",
